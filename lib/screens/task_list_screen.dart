@@ -5,6 +5,7 @@ import 'task_create_screen.dart';
 import '../riverpod/tasks_provider.dart';
 import '../widgets/task_card.dart';
 import '../widgets/custom_app_bar.dart';
+import '../widgets/progress_task_field.dart';
 
 class TaskListScreen extends ConsumerWidget {
   const TaskListScreen({super.key});
@@ -12,8 +13,10 @@ class TaskListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tasks = ref.watch(tasksProvider);
-    final ongoingTasks = tasks.where((t) => !t.isDone).toList();
+    final taskNotifier = ref.read(tasksProvider.notifier);
+    final ongoingTasks = taskNotifier.state.where((t) => !t.isDone).toList();
     final completedTasks = tasks.where((t) => t.isDone).toList();
+
 
     return Scaffold(
       appBar: PreferredSize(
@@ -47,7 +50,7 @@ class TaskListScreen extends ConsumerWidget {
           children: [
             // タスクスコアとグラフ（仮）
             Container(
-              height: 140,
+              height: 160,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: const Color(0xFF5B67CA),
@@ -100,6 +103,7 @@ class TaskListScreen extends ConsumerWidget {
                 ),
               ),
             ),
+            // 進行中のタスク
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: Column(
@@ -133,6 +137,10 @@ class TaskListScreen extends ConsumerWidget {
                 ],
               ),
             ),
+            ...ongoingTasks.map(
+                (task) => ProgressTaskField(task: task)
+            ),
+            // 週間達成状況
             Container(
               height: 140,
               padding: const EdgeInsets.all(20),

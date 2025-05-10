@@ -6,13 +6,15 @@ import 'package:uuid/uuid.dart';
 import '../models/task.dart';
 import '../models/subtask.dart';
 
-final tasksProvider =
-StateNotifierProvider<TasksProvider, List<Task>>((ref) => TasksProvider());
+final tasksProvider = NotifierProvider<TasksNotifier, List<Task>>(TasksNotifier.new);
 
-class TasksProvider extends StateNotifier<List<Task>> {
-  TasksProvider() : super([]);
-
+class TasksNotifier extends Notifier<List<Task>> {
   final uuid = Uuid();
+
+  @override
+  List<Task> build() {
+    return [];
+  }
 
   void addTask(
       String title, {
@@ -33,14 +35,7 @@ class TasksProvider extends StateNotifier<List<Task>> {
   void toggleTaskDone(String taskId) {
     state = state.map((task) {
       if (task.id == taskId) {
-        return Task(
-          id: task.id,
-          title: task.title,
-          dueDate: task.dueDate,
-          dueTime: task.dueTime,
-          subTasks: task.subTasks,
-          isDone: !task.isDone,
-        );
+        return task.copyWith(isDone: !task.isDone);
       }
       return task;
     }).toList();
@@ -50,14 +45,7 @@ class TasksProvider extends StateNotifier<List<Task>> {
     state = state.map((task) {
       if (task.id == taskId) {
         final newSubTask = SubTask(id: uuid.v4(), title: subTaskTitle);
-        return Task(
-          id: task.id,
-          title: task.title,
-          dueDate: task.dueDate,
-          dueTime: task.dueTime,
-          subTasks: [...task.subTasks, newSubTask],
-          isDone: task.isDone,
-        );
+        return task.copyWith(subTasks: [...task.subTasks, newSubTask]);
       }
       return task;
     }).toList();
@@ -75,19 +63,12 @@ class TasksProvider extends StateNotifier<List<Task>> {
       if (task.id == taskId) {
         final updatedSubTasks = task.subTasks.map((sub) {
           if (sub.id == subTaskId) {
-            return SubTask(id: sub.id, title: sub.title, isDone: !sub.isDone);
+            return sub.copyWith(isDone: !sub.isDone);
           }
           return sub;
         }).toList();
 
-        return Task(
-          id: task.id,
-          title: task.title,
-          dueDate: task.dueDate,
-          dueTime: task.dueTime,
-          subTasks: updatedSubTasks,
-          isDone: task.isDone,
-        );
+        return task.copyWith(subTasks: updatedSubTasks);
       }
       return task;
     }).toList();
