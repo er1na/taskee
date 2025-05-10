@@ -1,7 +1,16 @@
-// lib/models/subtask.dart
-class SubTask {
+import 'package:hive/hive.dart';
+
+part 'subtask.g.dart'; // build_runner で生成されるファイル
+
+@HiveType(typeId: 1)
+class SubTask extends HiveObject {
+  @HiveField(0)
   String id;
+
+  @HiveField(1)
   String title;
+
+  @HiveField(2)
   bool isDone;
 
   SubTask({

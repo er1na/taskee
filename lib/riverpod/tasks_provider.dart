@@ -1,6 +1,7 @@
 // lib/providers/tasks_provider.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
 
 import '../models/task.dart';
@@ -11,9 +12,12 @@ final tasksProvider = NotifierProvider<TasksNotifier, List<Task>>(TasksNotifier.
 class TasksNotifier extends Notifier<List<Task>> {
   final uuid = Uuid();
 
+  late Box<Task> _box;
+
   @override
   List<Task> build() {
-    return [];
+    _box = Hive.box('tasks');
+    return _box.values.toList();
   }
 
   void addTask(
@@ -30,12 +34,15 @@ class TasksNotifier extends Notifier<List<Task>> {
       subTasks: subTasks,
     );
     state = [...state, task];
+    _box.put(task.id, task);
   }
 
   void toggleTaskDone(String taskId) {
     state = state.map((task) {
       if (task.id == taskId) {
-        return task.copyWith(isDone: !task.isDone);
+        final updated = task.copyWith(isDone: !task.isDone);
+        _box.put(task.id, updated);
+        return updated;
       }
       return task;
     }).toList();
@@ -45,7 +52,9 @@ class TasksNotifier extends Notifier<List<Task>> {
     state = state.map((task) {
       if (task.id == taskId) {
         final newSubTask = SubTask(id: uuid.v4(), title: subTaskTitle);
-        return task.copyWith(subTasks: [...task.subTasks, newSubTask]);
+        final updated = task.copyWith(subTasks: [...task.subTasks, newSubTask]);
+        _box.put(task.id, updated);
+        return updated;
       }
       return task;
     }).toList();
@@ -56,6 +65,7 @@ class TasksNotifier extends Notifier<List<Task>> {
       for (final task in state)
         if (task.id == updatedTask.id) updatedTask else task,
     ];
+    _box.put(updatedTask.id, updatedTask);
   }
 
   void toggleSubTaskDone(String taskId, String subTaskId) {
@@ -68,9 +78,31 @@ class TasksNotifier extends Notifier<List<Task>> {
           return sub;
         }).toList();
 
-        return task.copyWith(subTasks: updatedSubTasks);
+        final updated = task.copyWith(subTasks: updatedSubTasks);
+        _box.put(task.id, updated);
+        return updated;
       }
       return task;
     }).toList();
+  }
+
+  void removeSubTask(String taskId, String subTaskId) {
+    state = state.map((task) {
+      if (task.id == taskId) {
+        final updatedSubTasks = task.subTasks
+            .where((sub) => sub.id != subTaskId)
+            .toList();
+
+        final updated = task.copyWith(subTasks: updatedSubTasks);
+        _box.put(task.id, updated);
+        return updated;
+      }
+      return task;
+    }).toList();
+  }
+
+  void deleteTask(String taskId) {
+    state = state.where((task) => task.id != taskId).toList();
+    _box.delete(taskId);
   }
 }

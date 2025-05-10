@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:taskee/models/subtask.dart';
+import 'package:taskee/models/task.dart';
 import 'l10n/gen_l10n/app_text.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'screens/task_list_screen.dart';
 import 'screens/task_create_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Hive.initFlutter();
+  Hive.registerAdapter(TaskAdapter());
+  Hive.registerAdapter(SubTaskAdapter());
+
+  await Hive.openBox<Task>('tasks');
   runApp(const ProviderScope(child: MyApp()));
 }
 
