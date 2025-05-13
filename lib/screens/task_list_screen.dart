@@ -104,41 +104,41 @@ class TaskListScreen extends ConsumerWidget {
               ),
             ),
             // 進行中のタスク
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 24),
-                  Text(
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 24),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Text(
                       AppText.of(context)!.tasksInProgress,
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 22
                       )
                   ),
-                  const SizedBox(height: 8),
-                  ...ongoingTasks.map(
-                          (task) => TaskCard(task: task)
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                      AppText.of(context)!.completedTasks,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 22
-                  )
-              ),
-              const SizedBox(height: 8),
-              ...completedTasks.map(
-                      (task) => TaskCard(task: task)
-              ),
-              const SizedBox(height: 24),
-                ],
-              ),
+                ),
+                const SizedBox(height: 8),
+                ...ongoingTasks.expand(
+                        (task) => [
+                          ProgressTaskField(task: task),
+                          SizedBox(height: 12)
+                        ]
+                ),
+                const SizedBox(height: 24),
+                Text(
+                    AppText.of(context)!.completedTasks,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 22
+                )
             ),
-            ...ongoingTasks.map(
-                (task) => ProgressTaskField(task: task)
+            const SizedBox(height: 8),
+            ...completedTasks.map(
+                    (task) => TaskCard(task: task)
+            ),
+            const SizedBox(height: 24),
+              ],
             ),
             // 週間達成状況
             Container(

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:taskee/widgets/custom_app_bar.dart';
+import 'package:taskee/widgets/custom_text_field.dart';
+import 'package:taskee/widgets/custom_text_button.dart';
+import 'package:taskee/l10n/gen_l10n/app_text.dart';
 import '../models/task.dart';
 import '../models/subtask.dart';
 import '../riverpod/tasks_provider.dart';
@@ -7,7 +11,9 @@ import '../riverpod/tasks_provider.dart';
 class TaskEditScreen extends ConsumerStatefulWidget {
   final Task task;
 
-  const TaskEditScreen({Key? key, required this.task}) : super(key: key);
+  const TaskEditScreen({
+    super.key, required this.task
+  });
 
   @override
   ConsumerState<TaskEditScreen> createState() => _TaskEditScreenState();
@@ -15,6 +21,7 @@ class TaskEditScreen extends ConsumerStatefulWidget {
 
 class _TaskEditScreenState extends ConsumerState<TaskEditScreen> {
   late TextEditingController _titleController;
+  final _formKey = GlobalKey<FormState>();
   DateTime? _dueDate;
   TimeOfDay? _dueTime;
   late List<SubTask> _subTasks;
@@ -79,57 +86,82 @@ class _TaskEditScreenState extends ConsumerState<TaskEditScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('タスク編集'),
+      appBar: CustomAppBar(
+        title: 'aaa',
+        isTop: false,
         actions: [
-          IconButton(icon: const Icon(Icons.check), onPressed: _save),
+          IconButton(
+              icon: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 18, 20, 0),
+                child: const Icon(
+                  Icons.check_circle,
+                  size: 32,
+                  color: Color(0xFF5B67CA),
+                ),
+              ),
+              onPressed: _save
+          ),
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: ListView(
-          children: [
-            TextField(
-              controller: _titleController,
-              decoration: const InputDecoration(labelText: 'タスク名'),
-            ),
-            const SizedBox(height: 16),
-            ListTile(
-              title: Text(_dueDate != null
-                  ? '締切日: ${_dueDate!.toLocal().toIso8601String().split('T').first}'
-                  : '締切日を選択'),
-              trailing: const Icon(Icons.calendar_today),
-              onTap: _pickDate,
-            ),
-            ListTile(
-              title: Text(_dueTime != null
-                  ? '締切時間: ${_dueTime!.format(context)}'
-                  : '時間を選択'),
-              trailing: const Icon(Icons.access_time),
-              onTap: _pickTime,
-            ),
-            const SizedBox(height: 16),
-            const Text('サブタスク'),
-            ..._subTasks.asMap().entries.map((entry) {
-              final index = entry.key;
-              final sub = entry.value;
-              return ListTile(
-                leading: const Icon(Icons.drag_indicator),
-                title: TextField(
-                  controller: TextEditingController(text: sub.title),
-                  onChanged: (val) => _updateSubTask(index, val),
+        padding: const EdgeInsets.only(top: 30),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30),
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              children: [
+                CustomTextField(
+                  controller: _titleController,
+                  hint: AppText.of(context)!.taskName,
                 ),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () => _deleteSubTask(index),
+                const SizedBox(height: 15),
+                CustomTextButton(
+                  text: _dueDate!=null
+                      ? _dueDate!.toLocal().toString().split(' ')[0]
+                      : '日付選択',
+                  onPressed: () async {
+                    final picked = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2020),
+                      lastDate: DateTime(2100),
+                    );
+                    if (picked != null) {
+                      setState(() => _dueDate = picked);
+                    }
+                  },
                 ),
-              );
-            }).toList(),
-            TextButton(
-              onPressed: _addSubTask,
-              child: const Text('+ サブタスクを追加'),
+                const SizedBox(height: 8),
+                CustomTextButton(
+                    text: _dueTime != null
+                        ? '締切時間: ${_dueTime!.format(context)}'
+                        : '時間を選択',
+                    onPressed: _pickTime
+                ),
+                const Text('サブタスク'),
+                ..._subTasks.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final sub = entry.value;
+                  return ListTile(
+                    leading: const Icon(Icons.drag_indicator),
+                    title: TextField(
+                      controller: TextEditingController(text: sub.title),
+                      onChanged: (val) => _updateSubTask(index, val),
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () => _deleteSubTask(index),
+                    ),
+                  );
+                }),
+                TextButton(
+                  onPressed: _addSubTask,
+                  child: const Text('+ サブタスクを追加'),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

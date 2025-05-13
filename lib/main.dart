@@ -11,7 +11,7 @@ import 'screens/task_create_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Hive.initFlutter();
+  await Hive.initFlutter();
   Hive.registerAdapter(TaskAdapter());
   Hive.registerAdapter(SubTaskAdapter());
 

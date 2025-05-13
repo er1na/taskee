@@ -22,23 +22,22 @@ class ChecklistCircle extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 30,
-      width: 30,
+      height: 13,
+      width: 13,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.amber
+        color: Color(0xFFe8ecfd)
       ),
       child: Center(
         child: GestureDetector(
-          onTap: onTap,
           child: Container(
-            height: 20,
-            width: 20,
+            height: 7,
+            width: 7,
             decoration:  BoxDecoration(
               shape: BoxShape.circle,
               color: isDone
-                ? Colors.blue
-                : Colors.blue.withOpacity(0)
+                ? Color(0xFF5B67CA)
+                : Color(0xFF5B67CA).withOpacity(0)
             ),
           ),
         ),
