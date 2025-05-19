@@ -16,7 +16,7 @@ class TaskListScreen extends ConsumerWidget {
     final tasks = ref.watch(tasksProvider);
     final taskNotifier = ref.read(tasksProvider.notifier);
     final ongoingTasks = taskNotifier.state.where((t) => !t.isDone).toList();
-    final completedTasks = tasks.where((t) => t.isDone).toList();
+    final completedTasks = taskNotifier.state.where((t) => t.isDone).toList();
 
     return Scaffold(
       appBar: PreferredSize(
@@ -126,14 +126,24 @@ class TaskListScreen extends ConsumerWidget {
                         ]
                 ),
                 const SizedBox(height: 24),
+                // 完了したタスク
                 Text(
                     AppText.of(context)!.completedTasks,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 22
+                    ),
+                ),
+                const SizedBox(height: 24),
+                ...completedTasks.expand(
+                    (task) => [
+                      CompletedTaskField(
+                          completedTask: task,
+                          onTap: () => ref.read(tasksProvider.notifier).reopenTask(task.id),
+                      ),
+                      SizedBox(height: 10)
+                    ]
                 )
-            ),
-            const SizedBox(height: 24),
               ],
             ),
             // 週間達成状況

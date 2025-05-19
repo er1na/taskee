@@ -107,6 +107,25 @@ class TasksNotifier extends Notifier<List<Task>> {
     }).toList();
   }
 
+  void reopenTask(String taskId) {
+    state = state.map((task) {
+      if (task.id == taskId && task.isDone) {
+        final resetSubTasks = task.subTasks
+            .map((sub) => sub.copyWith(isDone: false))
+            .toList();
+
+        final updated = task.copyWith(
+          isDone: false,
+          subTasks: resetSubTasks,
+        );
+
+        _box.put(task.id, updated);
+        return updated;
+      }
+      return task;
+    }).toList();
+  }
+
   void deleteTask(String taskId) {
     state = state.where((task) => task.id != taskId).toList();
     _box.delete(taskId);
