@@ -78,8 +78,14 @@ class TasksNotifier extends Notifier<List<Task>> {
           return sub;
         }).toList();
 
-        final updated = task.copyWith(subTasks: updatedSubTasks);
+        final allDone = updatedSubTasks.every((sub) => sub.isDone);
+        final updated = task.copyWith(
+          subTasks: updatedSubTasks,
+          isDone: allDone,
+        );
+
         _box.put(task.id, updated);
+
         return updated;
       }
       return task;

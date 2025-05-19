@@ -6,6 +6,7 @@ import '../riverpod/tasks_provider.dart';
 import '../widgets/task_card.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/progress_task_field.dart';
+import '../widgets/completed_task_field.dart';
 
 class TaskListScreen extends ConsumerWidget {
   const TaskListScreen({super.key});
@@ -16,7 +17,6 @@ class TaskListScreen extends ConsumerWidget {
     final taskNotifier = ref.read(tasksProvider.notifier);
     final ongoingTasks = taskNotifier.state.where((t) => !t.isDone).toList();
     final completedTasks = tasks.where((t) => t.isDone).toList();
-
 
     return Scaffold(
       appBar: PreferredSize(
@@ -132,10 +132,6 @@ class TaskListScreen extends ConsumerWidget {
                         fontWeight: FontWeight.bold,
                         fontSize: 22
                 )
-            ),
-            const SizedBox(height: 8),
-            ...completedTasks.map(
-                    (task) => TaskCard(task: task)
             ),
             const SizedBox(height: 24),
               ],
