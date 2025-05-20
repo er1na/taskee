@@ -27,7 +27,7 @@ class CompletedTaskField extends ConsumerWidget {
         borderRadius: BorderRadius.circular(16)
       ),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(6.0),
         child: ListTile(
           title: Text(completedTask.title),
           trailing: GestureDetector(

@@ -127,14 +127,17 @@ class TaskListScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 24),
                 // 完了したタスク
-                Text(
-                    AppText.of(context)!.completedTasks,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 22
-                    ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Text(
+                      AppText.of(context)!.completedTasks,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 22
+                      ),
+                  ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 8),
                 ...completedTasks.expand(
                     (task) => [
                       CompletedTaskField(
