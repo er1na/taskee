@@ -122,15 +122,18 @@ class _TaskCreateScreenState extends ConsumerState<TaskCreateScreen> {
                     text: _dueTime != null
                           ? _dueTime?.format(context)
                           : '時間選択',
-                    onPressed: () async {
-                      final picked = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                      );
-                      if (picked != null) {
-                        setState(() => _dueTime = picked);
-                      }
-                    },
+                    onPressed:
+                        _dueDate == null
+                         ? (){}
+                         : () async {
+                              final picked = await showTimePicker(
+                                context: context,
+                                initialTime: TimeOfDay.now(),
+                              );
+                              if (picked != null) {
+                                setState(() => _dueTime = picked);
+                              }
+                            },
                   ),
                   const SizedBox(height: 30),
                   Row(

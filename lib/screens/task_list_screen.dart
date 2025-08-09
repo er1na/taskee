@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:taskee/l10n/gen_l10n/app_text.dart';
+import '../models/task.dart';
 import 'task_create_screen.dart';
 import '../riverpod/tasks_provider.dart';
 import '../widgets/task_card.dart';
@@ -17,6 +18,7 @@ class TaskListScreen extends ConsumerWidget {
     final taskNotifier = ref.read(tasksProvider.notifier);
     final ongoingTasks = taskNotifier.state.where((t) => !t.isDone).toList();
     final completedTasks = taskNotifier.state.where((t) => t.isDone).toList();
+    const double maxHeight = 50.0;
 
     return Scaffold(
       appBar: PreferredSize(
@@ -48,7 +50,7 @@ class TaskListScreen extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 25),
         child: ListView(
           children: [
-            // タスクスコアとグラフ（仮）
+            /*
             Container(
               height: 160,
               padding: const EdgeInsets.all(20),
@@ -103,11 +105,12 @@ class TaskListScreen extends ConsumerWidget {
                 ),
               ),
             ),
+            */
             // 進行中のタスク
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 24),
+                const SizedBox(height: 15),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Text(
@@ -150,9 +153,10 @@ class TaskListScreen extends ConsumerWidget {
               ],
             ),
             // 週間達成状況
+            /*
             Container(
-              height: 140,
-              padding: const EdgeInsets.all(20),
+              height: 160,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border.all(
@@ -162,7 +166,7 @@ class TaskListScreen extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Row(
                     children: [
@@ -170,7 +174,7 @@ class TaskListScreen extends ConsumerWidget {
                       Text(AppText.of(context)!.weeklyProgress, style: TextStyle(fontWeight: FontWeight.bold)),
                     ],
                   ),
-                  const SizedBox(height: 25),
+                  const SizedBox(height: 15),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -184,14 +188,13 @@ class TaskListScreen extends ConsumerWidget {
                       return Column(
                         children: [
                           Container(
-                            height: 29,
+                            height: 50,
                             width: 8,
                             decoration: BoxDecoration(
                               color: Colors.indigo,
                               borderRadius: BorderRadius.circular(4),
                             ),
                           ),
-
                           day
                         ],
                       );
@@ -200,6 +203,7 @@ class TaskListScreen extends ConsumerWidget {
                 ],
               ),
             )
+            */
           ],
         ),
       ),

@@ -19,8 +19,9 @@ class ProgressTaskField extends ConsumerWidget{
   Widget build(BuildContext context, WidgetRef ref){
     final ongoingTaskTitle = task.title;
     final ongoingSubTasks = task.subTasks;
-    final deadlineDate = DateFormat('MM/dd').format(task.dueDate!);
-    final deadlineTime = task.dueTime!.format(context);
+    final String? deadlineDate =
+      (task.dueDate != null) ? DateFormat('MM/dd').format(task.dueDate!) : null;
+    final String? deadlineTime = task.dueTime?.format(context);
 
     return Container(
       decoration: BoxDecoration(
@@ -63,9 +64,11 @@ class ProgressTaskField extends ConsumerWidget{
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 5.0),
-              child: Text(
-                "締切：$deadlineDate $deadlineTime",
-              ),
+              child: deadlineDate == null
+                      ? Text("締切：なし")
+                      : deadlineTime == null
+                        ? Text("締切：$deadlineDate")
+                        : Text("締切：$deadlineDate $deadlineTime")
             ),
             SizedBox(height: 5),
             Column(
@@ -84,7 +87,7 @@ class ProgressTaskField extends ConsumerWidget{
                           isDone: subTask.isDone,
                           onTap: () {
                             ref
-                                .read(tasksProvider.notifier);
+                              .read(tasksProvider.notifier);
                           },
                         ),
                         const SizedBox(width: 12),
