@@ -36,7 +36,7 @@ class _TaskCreateScreenState extends ConsumerState<TaskCreateScreen> {
         _titleController.text.trim(),
         dueDate: _dueDate,
         dueTime: _dueTime,
-        subTasks: filteredSubTasks,
+        subTasks: filteredSubTasks
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -86,7 +86,13 @@ class _TaskCreateScreenState extends ConsumerState<TaskCreateScreen> {
                 children: [
                   CustomTextField(
                       controller: _titleController,
-                      hint: AppText.of(context)!.taskName
+                      hint: AppText.of(context)!.taskName,
+                      validator: (v){
+                        if(v == null || v.trim().isEmpty){
+                          return "タイトルを入力してください";
+                        }
+                        return null;
+                      }
                   ),
                   const SizedBox(height: 15),
                   Row(

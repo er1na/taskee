@@ -5,7 +5,7 @@ class CustomTextField extends StatelessWidget {
   final String? label;
   final String? hint;
   final int maxLines;
-  final FormFieldValidator<String>? validator;
+  final String? Function(String?)? validator;
   final TextInputType keyboardType;
 
   const CustomTextField({
@@ -25,6 +25,7 @@ class CustomTextField extends StatelessWidget {
       maxLines: maxLines,
       keyboardType: keyboardType,
       validator: validator,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
