@@ -4,9 +4,11 @@ import 'package:taskee/widgets/custom_app_bar.dart';
 import 'package:taskee/widgets/custom_text_field.dart';
 import 'package:taskee/widgets/custom_text_button.dart';
 import 'package:taskee/l10n/gen_l10n/app_text.dart';
+import '../widgets/subtask_tile.dart';
 import '../models/task.dart';
 import '../models/subtask.dart';
 import '../riverpod/tasks_provider.dart';
+import 'package:uuid/uuid.dart';
 
 class TaskEditScreen extends ConsumerStatefulWidget {
   final Task task;
@@ -21,6 +23,7 @@ class TaskEditScreen extends ConsumerStatefulWidget {
 
 class _TaskEditScreenState extends ConsumerState<TaskEditScreen> {
   late TextEditingController _titleController;
+  final _subTaskController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   DateTime? _dueDate;
   TimeOfDay? _dueTime;
@@ -87,7 +90,7 @@ class _TaskEditScreenState extends ConsumerState<TaskEditScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'aaa',
+        title: AppText.of(context)!.editTask,
         isTop: false,
         actions: [
           IconButton(
@@ -114,8 +117,26 @@ class _TaskEditScreenState extends ConsumerState<TaskEditScreen> {
                 CustomTextField(
                   controller: _titleController,
                   hint: AppText.of(context)!.taskName,
+                  validator: (v){
+                    if(v == null || v.trim().isEmpty){
+                      return "タイトルを入力してください";
+                    }
+                    return null;
+                  }
                 ),
                 const SizedBox(height: 15),
+                Row(
+                  children: [
+                    const SizedBox(width: 13),
+                    Text("締切",
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 5),
                 CustomTextButton(
                   text: _dueDate!=null
                       ? _dueDate!.toLocal().toString().split(' ')[0]
@@ -139,25 +160,65 @@ class _TaskEditScreenState extends ConsumerState<TaskEditScreen> {
                         : '時間を選択',
                     onPressed: _pickTime
                 ),
-                const Text('サブタスク'),
+                const SizedBox(height: 30),
+                Row(
+                  children: [
+                    const SizedBox(width: 13),
+                    const Text(
+                      'サブタスク',
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 5),
                 ..._subTasks.asMap().entries.map((entry) {
                   final index = entry.key;
                   final sub = entry.value;
-                  return ListTile(
-                    leading: const Icon(Icons.drag_indicator),
-                    title: TextField(
-                      controller: TextEditingController(text: sub.title),
-                      onChanged: (val) => _updateSubTask(index, val),
-                    ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () => _deleteSubTask(index),
-                    ),
+                  return Column(
+                    children: [
+                      SubtaskTile(
+                        subtaskTitle: sub.title,
+                        callback: (){
+                          setState(() {
+                            _subTasks.removeWhere((s) => sub.id == s.id);
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 10)
+                    ],
                   );
                 }),
-                TextButton(
-                  onPressed: _addSubTask,
-                  child: const Text('+ サブタスクを追加'),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: Row(
+                    children: [
+                      SizedBox(width: 15),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _subTaskController,
+                          decoration: const InputDecoration(hintText: 'サブタスク追加'),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: () {
+                          final title = _subTaskController.text.trim();
+                          if (title.isNotEmpty) {
+                            setState(() {
+                              _subTasks.add(SubTask(
+                                id: const Uuid().v4(),
+                                title: title,
+                              ));
+                              _subTaskController.clear();
+                            });
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

@@ -65,9 +65,9 @@ class _TaskCreateScreenState extends ConsumerState<TaskCreateScreen> {
               icon: Padding(
                 padding: const EdgeInsets.fromLTRB(0, 18, 20, 0),
                 child: const Icon(
-                                Icons.check_circle,
-                                size: 32,
-                                color: Color(0xFF5B67CA),
+                    Icons.check_circle,
+                    size: 32,
+                    color: Color(0xFF5B67CA),
                 ),
               ),
               onPressed: (){_submit();}

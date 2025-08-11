@@ -52,13 +52,6 @@ class ProgressTaskField extends ConsumerWidget{
                     ),
                     IconButton(
                         onPressed: (){
-                          /*Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => TaskEditScreen(task: task)
-                            ),
-                          );
-                        */
                           ref.read(tasksProvider.notifier).toggleTaskDone(task.id);
                         },
                         icon: Icon(
@@ -118,7 +111,12 @@ class ProgressTaskField extends ConsumerWidget{
                   height: 40,
                   child: IconButton(
                     onPressed: (){
-                      ref.read(tasksProvider.notifier).deleteTask(task.id);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => TaskEditScreen(task: task)
+                        ),
+                      );
                     },
                     icon: Icon(Icons.edit),
                   ),
